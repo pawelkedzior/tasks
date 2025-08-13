@@ -1,0 +1,54 @@
+exclude: '^docs/conf.py'
+
+repos:
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v6.0.0
+  hooks:
+  - id: trailing-whitespace
+  - id: check-merge-conflict
+  - id: check-docstring-first
+  - id: check-added-large-files
+  - id: check-symlinks
+  - id: detect-private-key
+  - id: destroyed-symlinks
+  - id: check-ast
+  - id: check-json
+  - id: check-xml
+  - id: check-yaml
+  - id: debug-statements
+  - id: end-of-file-fixer
+  - id: requirements-txt-fixer
+  - id: mixed-line-ending
+    args: ['--fix=auto']
+  - id: name-tests-test
+    args: ['--pytest']
+
+
+- repo: https://github.com/PyCQA/autoflake
+  rev: v2.3.1
+  hooks:
+  - id: autoflake
+    args: [
+      --in-place,
+      --remove-all-unused-imports,
+      --remove-unused-variables,
+    ]
+
+- repo: https://github.com/PyCQA/isort
+  rev: 6.0.1
+  hooks:
+  - id: isort
+
+- repo: https://github.com/psf/black
+  rev: 25.1.0
+  hooks:
+  - id: black
+    language_version: python3
+
+- repo: https://github.com/charliermarsh/ruff-pre-commit
+  rev: v0.12.8
+  hooks:
+    - id: ruff
+      args:
+        - --fix
+    - id: ruff-format

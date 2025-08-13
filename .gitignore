@@ -1,0 +1,8 @@
+**/.idea
+**/.vscode
+
+docs/api/*
+docs/_rst/*
+docs/_build/*
+
+.venv*/
