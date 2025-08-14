@@ -34,12 +34,12 @@ jobs:
           tox -c backend/ -e clean,build
       - name: Record the path of wheel distribution
         id: wheel-distribution
-        run: echo "path=$(ls dist/*.whl)" >> $GITHUB_OUTPUT
+        run: echo "path=$(ls backend/dist/*.whl)" >> $GITHUB_OUTPUT
       - name: Store the distribution files for use in other stages
         uses: actions/upload-artifact@v4
         with:
           name: python-distribution-files
-          path: dist/
+          path: backend/dist/
           retention-days: 1
 
   test:
@@ -62,7 +62,7 @@ jobs:
           python-version: ${{ matrix.python }}
       - name: Retrieve pre-built distribution files
         uses: actions/download-artifact@v5
-        with: {name: python-distribution-files, path: dist/}
+        with: {name: python-distribution-files, path: backend/dist/}
       - name: Run tests
         run: >-
           pipx run --python '${{ steps.setup-python.outputs.python-path }}'
