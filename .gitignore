@@ -6,3 +6,6 @@ docs/_rst/*
 docs/_build/*
 
 .venv*/
+.artifacts/*
+
+coverage.lcov
