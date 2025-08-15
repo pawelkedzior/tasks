@@ -7,6 +7,6 @@ export default defineNuxtConfig({
         config: {
           stylistic: true
         }
-    }
+    },
     devtools: { enabled: true }
 })
