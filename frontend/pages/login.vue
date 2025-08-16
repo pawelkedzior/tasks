@@ -1,7 +1,9 @@
 <script setup lang="ts">
-    function logIn() {
+    definePageMeta({
+        middleware: "guest"
+    })
 
-    }
+    const {logIn} = useAuth()
 </script>
 
 <template>

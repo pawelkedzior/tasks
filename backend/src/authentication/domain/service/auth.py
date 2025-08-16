@@ -9,6 +9,11 @@ from authentication.domain.port.outgoing import UserRepository
 class AuthenticationService(AuthService):
     pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
+    def __new__(cls, user_repository: UserRepository):
+        if not hasattr(cls, "instance"):
+            cls.instance = super(AuthenticationService, cls).__new__(cls)
+        return cls.instance
+
     def __init__(self, user_repository: UserRepository):
         self.user_repository = user_repository
 
@@ -24,7 +29,8 @@ class AuthenticationService(AuthService):
             raise AuthenticationError
 
     def register_new_user(self, user: User):
-        self.user_repository.add(user)
+        user.password = self.pwd_context.hash(user.password)
+        self.user_repository.add_user(user)
 
     def verify_password(self, provided_password: str, stored_password: str) -> bool:
         return self.pwd_context.verify(provided_password, stored_password)

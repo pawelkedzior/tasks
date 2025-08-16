@@ -5,7 +5,7 @@ from authentication.domain.model.user import User
 
 class UserRepository(metaclass=abc.ABCMeta):
     @abc.abstractmethod
-    def add(self, vote: User) -> User:
+    def add_user(self, vote: User) -> User:
         raise NotImplementedError
 
     @abc.abstractmethod

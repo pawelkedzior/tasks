@@ -1,4 +1,7 @@
 <script setup lang="ts">
+    definePageMeta({
+        middleware: "auth"
+    })
     const title = ref("Powitanie")
     const msg = ref("Cześć świecie")
 </script>

@@ -1,6 +1,20 @@
 <script setup lang="ts">
-    function register() {
+    definePageMeta({
+        middleware: "guest"
+    })
+    const {$api} = useNuxtApp()
+    const toast = useToast()
 
+    function register(loginData: {username: string, password: string}) {
+        $api("/auth/register", {
+            method: "PUT",
+            body: loginData
+        }).then((_response) => {
+            toast.add({title: "Rejestracja udana", description: "Rejestracja przebiegła pomyślnie. Teraz się zaloguj.", color: "success"})
+            navigateTo("/login")
+        }).catch((_error) => {
+            toast.add({title: "Błąd rejestracji", description: "Rejestracja nieudana. Klient o takim loginie już istnieje", color: "error"})
+        })
     }
 </script>
 

@@ -2,7 +2,7 @@
     import {object, string} from "yup"
 
     const props = withDefaults(defineProps<{
-        onSubmit: () => void
+        onSubmit: (loginData: {username: string, password: string}) => void
         register?: boolean
     }>(), {
         register: false
@@ -10,23 +10,22 @@
 
     const schema = object({
         login: string()
-            .min(3, "Za krótki login")
-            .required("To pole jest wymagane"),
+            .min(3, "Za krótki login"),
         password: string()
             .min(8, "Hasło musi zawierać przynajmniej 8 znaków")
             .required("To pole jest wymagane")
     })
 
     const loginData = reactive({
-        login: "",
+        username: "",
         password: ""
     })
 </script>
 
 <template>
-    <UForm :state="loginData" :schema="schema" class="w-64 mx-auto grid grid-cols-1 items-center" @submit="props.onSubmit()">
+    <UForm :state="loginData" :schema="schema" class="w-64 mx-auto grid grid-cols-1 items-center" @submit="props.onSubmit(loginData)">
         <UFormField label="Login" name="login">
-            <UInput v-model="loginData.login" class="w-full"/>
+            <UInput v-model="loginData.username" class="w-full"/>
         </UFormField>
         <UFormField label="Hasło" name="password">
             <UInput v-model="loginData.password" type="password" class="w-full"/>
