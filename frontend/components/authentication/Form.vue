@@ -1,9 +1,20 @@
 <script setup lang="ts">
+    import {object, string} from "yup"
+
     const props = withDefaults(defineProps<{
         onSubmit: () => void
         register?: boolean
     }>(), {
         register: false
+    })
+
+    const schema = object({
+        login: string()
+            .min(3, "Za krótki login")
+            .required("To pole jest wymagane"),
+        password: string()
+            .min(8, "Hasło musi zawierać przynajmniej 8 znaków")
+            .required("To pole jest wymagane")
     })
 
     const loginData = reactive({
@@ -13,7 +24,7 @@
 </script>
 
 <template>
-    <UForm :state="loginData" class="w-64 mx-auto grid grid-cols-1 items-center" @submit="props.onSubmit()">
+    <UForm :state="loginData" :schema="schema" class="w-64 mx-auto grid grid-cols-1 items-center" @submit="props.onSubmit()">
         <UFormField label="Login" name="login">
             <UInput v-model="loginData.login" class="w-full"/>
         </UFormField>
