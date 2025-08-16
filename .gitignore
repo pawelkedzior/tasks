@@ -6,6 +6,7 @@ docs/_rst/*
 docs/_build/*
 
 .venv*/
-.artifacts/*
+.artifacts
+.tox
 
 coverage.lcov
