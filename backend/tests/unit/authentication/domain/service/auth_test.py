@@ -3,9 +3,11 @@ from unittest.mock import MagicMock, patch
 
 from authentication.adapters.outgoing.memory import InMemoryUserRepository
 from authentication.domain.model.user import User
+from authentication.domain.port.incoming import AuthService
 from authentication.domain.port.outgoing import (
     UserAlreadyExistsError,
     UserNotFoundError,
+    UserRepository,
 )
 from authentication.domain.service.auth import (
     AuthenticationError,
@@ -13,54 +15,62 @@ from authentication.domain.service.auth import (
 )
 
 
-class TestAuthenticationServiceAttemptAuthentication(TestCase):
-    user = User(username="username", password="password")
-
-    def test_looks_for_user_in_repository(self):
+def prepare_attempt_authentication(func):
+    def wrapper(self):
         user_repository = InMemoryUserRepository()
         service = AuthenticationService(user_repository)
         service.verify_password = MagicMock(return_value=True)
         user_repository.find = MagicMock(return_value=self.user)
+        with patch(
+            "authentication.domain.service.auth.create_access_token",
+            MagicMock(return_value=self.expected_token),
+        ):
+            func(self, user_repository, service)
 
+    return wrapper
+
+
+class TestAuthenticationServiceAttemptAuthentication(TestCase):
+    user = User(username="username", password="password")
+    expected_token = "token"
+
+    @prepare_attempt_authentication
+    def test_looks_for_user_in_repository(
+        self, user_repository: UserRepository, service: AuthService
+    ):
         service.attempt_authentication(self.user)
 
         user_repository.find.assert_called_with(self.user.username)
 
-    def test_verifies_password(self):
-        user_repository = InMemoryUserRepository()
-        service = AuthenticationService(user_repository)
-        service.verify_password = MagicMock(return_value=True)
-
+    @prepare_attempt_authentication
+    def test_verifies_password(
+        self, user_repository: UserRepository, service: AuthService
+    ):
         service.attempt_authentication(self.user)
 
         service.verify_password.assert_called()
 
-    def test_returns_token_when_success(self):
-        user_repository = InMemoryUserRepository()
-        service = AuthenticationService(user_repository)
-        service.verify_password = MagicMock(return_value=True)
-        user_repository.find = MagicMock(return_value=self.user)
-        expected_token = "token"
-        with patch(
-            "authentication.domain.service.auth.create_access_token",
-            MagicMock(return_value=expected_token),
-        ):
-            token = service.attempt_authentication(self.user)
+    @prepare_attempt_authentication
+    def test_returns_token_when_success(
+        self, user_repository: InMemoryUserRepository, service: AuthenticationService
+    ):
+        token = service.attempt_authentication(self.user)
 
-            assert token == expected_token
+        assert token == self.expected_token
 
-    def test_throws_AuthenticationError_when_user_not_found(self):
-        user_repository = InMemoryUserRepository()
-        service = AuthenticationService(user_repository)
+    @prepare_attempt_authentication
+    def test_throws_AuthenticationError_when_user_not_found(
+        self, user_repository: InMemoryUserRepository, service: AuthenticationService
+    ):
         user_repository.find = MagicMock(side_effect=UserNotFoundError)
 
         with self.assertRaises(AuthenticationError):
             service.attempt_authentication(self.user)
 
-    def test_throws_AuthenticationError_when_wrong_password(self):
-        user_repository = InMemoryUserRepository()
-        user_repository.find = MagicMock(return_value=self.user)
-        service = AuthenticationService(user_repository)
+    @prepare_attempt_authentication
+    def test_throws_AuthenticationError_when_wrong_password(
+        self, user_repository: InMemoryUserRepository, service: AuthenticationService
+    ):
         service.verify_password = MagicMock(return_value=False)
 
         with self.assertRaises(AuthenticationError):
