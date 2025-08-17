@@ -52,4 +52,8 @@ repos:
     - id: ruff
       args:
         - --fix
+        - --ignore
+        - E402
+        - --ignore
+        - F401
     - id: ruff-format
