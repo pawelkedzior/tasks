@@ -2,7 +2,10 @@ from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
 from authentication.adapters.outgoing.memory import InMemoryUserRepository
+from authentication.domain.port.incoming import AuthService
+from authentication.domain.port.outgoing import UserRepository
 from authentication.domain.service.auth import AuthenticationService
+from tasks.domain.port.incoming import TaskService
 
 app = FastAPI()
 app.add_middleware(
@@ -13,6 +16,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-user_repository = InMemoryUserRepository()
-auth_service = AuthenticationService(user_repository)
+user_repository: UserRepository = InMemoryUserRepository()
+auth_service: AuthService = AuthenticationService(user_repository)
+tasks_service: TaskService = None
 import authentication.adapters.incoming.controller
+import tasks.adapters.incoming.controller
