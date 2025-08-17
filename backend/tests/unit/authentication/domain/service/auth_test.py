@@ -77,21 +77,57 @@ class TestAuthenticationServiceAttemptAuthentication(TestCase):
             service.attempt_authentication(self.user)
 
 
-class TestAuthenticationServiceRegisterUser(TestCase):
-    def test_throws_when_user_already_exists(self):
+def prepare_register_new_user(func):
+    def wrapper(self):
         user_repository = MagicMock()
         service = AuthenticationService(user_repository)
-        user = User(username="username", password="password")
+        service.pwd_context.hash = MagicMock(return_value="password_hash")
+        func(self, user_repository, service)
+
+    return wrapper
+
+
+class TestAuthenticationServiceRegisterUser(TestCase):
+    user = User(username="username", password="password")
+
+    @prepare_register_new_user
+    def test_hashes_password(
+        self, user_repository: InMemoryUserRepository, service: AuthenticationService
+    ):
+        expected_pass = self.user.password
+
+        service.register_new_user(self.user)
+
+        service.pwd_context.hash.assert_called_with(expected_pass)
+
+    @prepare_register_new_user
+    def test_throws_when_user_already_exists(
+        self, user_repository: InMemoryUserRepository, service: AuthenticationService
+    ):
         user_repository.add_user = MagicMock(side_effect=UserAlreadyExistsError())
 
         with self.assertRaises(UserAlreadyExistsError):
-            service.register_new_user(user)
+            service.register_new_user(self.user)
+
+    @prepare_register_new_user
+    def test_registers_new_user(
+        self, user_repository: InMemoryUserRepository, service: AuthenticationService
+    ):
+        service.register_new_user(self.user)
+
+        user_repository.add_user.assert_called_with(self.user)
+
+
+class TestAuthenticationServiceVerifyPassword(TestCase):
+    user = User(username="username", password="password")
 
     def test_registers_new_user(self):
         user_repository = MagicMock()
         service = AuthenticationService(user_repository)
-        user = User(username="username", password="password")
+        service.pwd_context.verify = MagicMock()
+        verified_hash = "password_hash"
+        stored_hash = "stored_hash"
 
-        service.register_new_user(user)
+        service.verify_password(verified_hash, stored_hash)
 
-        user_repository.add_user.assert_called_with(user)
+        service.pwd_context.verify.assert_called_with(verified_hash, stored_hash)
