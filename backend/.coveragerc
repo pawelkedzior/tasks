@@ -1,7 +1,9 @@
 # .coveragerc to control coverage.py
 [run]
 branch = True
-source = tasks
+source =
+    tasks
+    authentication
 # omit = bad_file.py
 
 [paths]
