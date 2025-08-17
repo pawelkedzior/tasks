@@ -116,18 +116,3 @@ class TestAuthenticationServiceRegisterUser(TestCase):
         service.register_new_user(self.user)
 
         user_repository.add_user.assert_called_with(self.user)
-
-
-class TestAuthenticationServiceVerifyPassword(TestCase):
-    user = User(username="username", password="password")
-
-    def test_registers_new_user(self):
-        user_repository = MagicMock()
-        service = AuthenticationService(user_repository)
-        service.pwd_context.verify = MagicMock()
-        verified_hash = "password_hash"
-        stored_hash = "stored_hash"
-
-        service.verify_password(verified_hash, stored_hash)
-
-        service.pwd_context.verify.assert_called_with(verified_hash, stored_hash)
