@@ -2,12 +2,21 @@
     definePageMeta({
         middleware: "auth"
     })
-    const title = ref("Powitanie")
-    const msg = ref("Cześć świecie")
 </script>
 
 <template>
-    <UCard class="m-8">
-        <UAlert class="w-64 mx-auto" :title="title" :description="msg"/>
-    </UCard>
+    <div class="p-4">
+        <UCard>
+            <TaskCounter/>
+            <USeparator class="mt-8"/>
+            <ClientOnly>
+                <TaskList class="mt-2"/>
+                <template #fallback>
+                    <USkeleton class="mt-4 h-8 w-full"/>
+                    <USkeleton class="mt-4 h-32 w-full"/>
+                    <USkeleton class="mt-4 h-8 w-full"/>
+                </template>
+            </ClientOnly>
+        </UCard>
+    </div>
 </template>

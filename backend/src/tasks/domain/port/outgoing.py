@@ -10,7 +10,7 @@ class TaskRepository(metaclass=abc.ABCMeta):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def gel_all_tasks(self) -> List[Task]:
+    def get_all_tasks(self) -> List[Task]:
         raise NotImplementedError
 
     @abc.abstractmethod

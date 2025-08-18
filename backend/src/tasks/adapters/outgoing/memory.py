@@ -19,7 +19,8 @@ class InMemoryTaskRepository(TaskRepository):
         self.tasks.append(task)
         return task
 
-    def gel_all_tasks(self) -> List[Task]:
+    def get_all_tasks(self) -> List[Task]:
+        print(self.tasks)
         return self.tasks
 
     def update_task(self, task: Task) -> Task:
@@ -29,7 +30,10 @@ class InMemoryTaskRepository(TaskRepository):
         return task_to_update
 
     def remove_task(self, task_id: str):
-        self.tasks.remove(Task(task_id))
+        try:
+            self.tasks.remove(self._find(task_id))
+        finally:
+            pass
 
     def _find(self, task_id: str) -> Task:
         try:

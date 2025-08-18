@@ -1,8 +1,8 @@
 export default function() {
     const {$api} = useNuxtApp()
     const toast = useToast()
-    const token = useState("authToken", (): Ref<string> => ref(""))
-    const isAuthenticated = computed<boolean>(() => token.value !== "")
+    const auth = useCookie("Session")
+    const isAuthenticated = computed<boolean>(() => auth.value !== "")
 
     async function logIn(loginData: {username: string, password: string}) {
         const acquiredToken = await $api<string>("/auth/login", {
@@ -10,14 +10,15 @@ export default function() {
             body: loginData
         })
 
-        if (!token) {
+        if (!acquiredToken) {
             toast.add({title: "Błąd logowania", color: "error"})
             return
         }
 
-        token.value = acquiredToken
+        auth.value = acquiredToken
+
         navigateTo("/")
     }
 
-    return {isAuthenticated, logIn, token}
+    return {isAuthenticated, logIn, auth}
 }

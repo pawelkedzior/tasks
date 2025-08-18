@@ -1,14 +1,18 @@
+from typing import Annotated
+
+from fastapi import Body
+
 from app import app, tasks_service
 from tasks.domain.model.task import Task
 
 
 @app.get("/tasks")
 async def get_all_tasks():
-    tasks_service.gel_all_tasks()
+    return tasks_service.get_all_tasks()
 
 
 @app.put("/tasks")
-async def add_new_task(task: Task):
+async def add_new_task(task: Annotated[Task, Body(embed=False)]):
     tasks_service.add_new_task(task)
 
 

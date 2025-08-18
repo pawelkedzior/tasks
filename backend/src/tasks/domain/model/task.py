@@ -1,14 +1,13 @@
 from dataclasses import dataclass
 
+from pydantic import BaseModel, Field
+
 
 @dataclass
-class Task:
-    task_id: str
+class Task(BaseModel):
     name: str
-    is_done: str
-
-    def __init__(self, task_id: str):
-        self.task_id = task_id
+    is_done: bool
+    task_id: str = Field(default=None, title="Task ID")
 
     def __eq__(self, other):
         return self.task_id == other.task_id

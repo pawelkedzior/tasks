@@ -6,7 +6,7 @@ from tasks.domain.model.task import Task
 
 class TaskService(metaclass=abc.ABCMeta):
     @abc.abstractmethod
-    def gel_all_tasks(self) -> List[Task]:
+    def get_all_tasks(self) -> List[Task]:
         raise NotImplementedError
 
     @abc.abstractmethod
