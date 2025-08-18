@@ -10,6 +10,7 @@ from tasks.domain.port.incoming import TaskService
 from tasks.domain.port.outgoing import TaskRepository
 from tasks.domain.service.tasks import TasksService
 
+print("Starting API...")
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
@@ -25,3 +26,5 @@ tasks_repository: TaskRepository = InMemoryTaskRepository()
 tasks_service: TaskService = TasksService(tasks_repository)
 import authentication.adapters.incoming.controller
 import tasks.adapters.incoming.controller
+
+print("API started")

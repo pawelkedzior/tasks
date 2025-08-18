@@ -1,8 +1,8 @@
 export default function() {
     const {$api} = useNuxtApp()
     const toast = useToast()
-    const auth = useCookie("Session")
-    const isAuthenticated = computed<boolean>(() => auth.value !== "")
+    const token = useState(() => useCookie("Session").value || "")
+    const isAuthenticated = computed<boolean>(() => token.value != "")
 
     async function logIn(loginData: {username: string, password: string}) {
         const acquiredToken = await $api<string>("/auth/login", {
@@ -15,10 +15,11 @@ export default function() {
             return
         }
 
-        auth.value = acquiredToken
+        token.value = acquiredToken
+        useCookie("Session").value = acquiredToken
 
         navigateTo("/")
     }
 
-    return {isAuthenticated, logIn, auth}
+    return {isAuthenticated, logIn, token}
 }

@@ -7,7 +7,7 @@
 
     function register(loginData: {username: string, password: string}) {
         $api("/auth/register", {
-            method: "PUT",
+            method: "POST",
             body: loginData
         }).then((_response) => {
             toast.add({title: "Rejestracja udana", description: "Rejestracja przebiegła pomyślnie. Teraz się zaloguj.", color: "success"})

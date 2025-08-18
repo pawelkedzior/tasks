@@ -1,5 +1,5 @@
 export default defineNuxtPlugin((nuxtApp) => {
-    const {auth: token} = useAuth()
+    const {token} = useAuth()
     const config = useRuntimeConfig()
 
     const api = $fetch.create({
